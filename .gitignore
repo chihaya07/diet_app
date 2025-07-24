@@ -1,0 +1,26 @@
+# FuelPHP specific
+/fuel/app/logs/
+/fuel/app/cache/
+/fuel/app/tmp/
+/fuel/app/config/development/migrations.php
+/fuel/app/vendor/
+/fuel/app/assets/
+/fuel/core/
+/fuel/packages/
+/fuel/vendor/
+
+# Docker specific
+/docker/db/data/
+
+# OS generated files
+.DS_Store
+.env
+.idea/
+.vscode/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# VS Code workspace files (if applicable)
+.vscode/

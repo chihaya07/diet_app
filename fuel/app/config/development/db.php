@@ -1,23 +1,16 @@
 <?php
 /**
- * The development database settings. These get merged with the global settings.
+ * The development database settings.
  */
 
 return array(
-	'default' => array(
-		'type'        => 'mysqli',
-		'connection'  => array(
-			'hostname'   => 'db',
-			'database'   => 'fuelphp',
-			'username'   => 'root',
-			'password'   => 'root',
-			'persistent' => false,
-		),
-		'identifier'   => '`',
-		'table_prefix' => '',
-		'charset'      => 'utf8',
-		'collation'    => 'utf8_unicode_ci',
-		'enable_cache' => true,
-		'profiling'    => false,
-	),
+    'default' => array(
+        'connection'  => array(
+            'hostname'   => 'db',        // Docker Composeサービス名 (dbサービス)
+            'port'       => '3306',      // コンテナ内部のMySQLポート
+            'database'   => 'chihaya_db',// docker-compose.yml で設定したデータベース名
+            'username'   => 'root',      // docker-compose.yml で設定したユーザー名
+            'password'   => 'root',      // docker-compose.yml で設定したパスワード
+        ),
+    ),
 );
