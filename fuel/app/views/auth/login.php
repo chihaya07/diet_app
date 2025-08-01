@@ -1,4 +1,4 @@
-<h1>ユーザー登録</h1>
+<h1>ログイン</h1>
 
 <?php if (\Session::get_flash('success')): ?>
     <div style="color: green;">
@@ -12,12 +12,13 @@
     </div>
 <?php endif; ?>
 
-<form action="/register" method="post">
-    <label for="username">ユーザー名:</label><br>
-    <input type="text" id="username" name="username" value="<?php echo \Input::post('username'); ?>"><br>
+<form action="/login" method="post">
     <label for="email">メールアドレス:</label><br>
     <input type="email" id="email" name="email" value="<?php echo \Input::post('email'); ?>"><br>
     <label for="password">パスワード:</label><br>
-    <input type="password" id="password" name="password"><br><br>
-    <button type="submit">登録</button>
+    <input type="password" id="password" name="password"><br>
+    <input type="checkbox" id="remember_me" name="remember_me" value="1">
+    <label for="remember_me">次回から自動ログイン</label><br><br>
+    <button type="submit">ログイン</button>
 </form>
+<p>アカウントをお持ちでない方は <a href="/register">こちら</a> から新規登録してください。</p>
