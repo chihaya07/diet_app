@@ -10,6 +10,12 @@ require COREPATH.'bootstrap.php';
 // Register the autoloader
 \Autoloader::register();
 
+\Autoloader::add_classes(array(
+  // Add classes you want to override here
+  // Example: 'View' => APPPATH.'classes/view.php',
+  'Security' => APPPATH.'classes/extend/security.php',
+));
+
 /**
  * Your environment.  Can be set to any of the following:
  *

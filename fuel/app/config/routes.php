@@ -8,4 +8,7 @@ return array(
     'login'    => 'auth/login',
     'dashboard' => 'dashboard',
     'logout' => 'auth/logout',
+
+    'record' => 'record/create',
+    'weight/list' => 'weight/list',
 );

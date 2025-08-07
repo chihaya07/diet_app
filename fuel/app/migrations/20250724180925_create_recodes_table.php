@@ -15,8 +15,8 @@ class Create_recodes_table // ここを Create_recodes_table に修正 (Migratio
             'weight_memo' => array('type' => 'text', 'null' => true), // メモ(任意) 
             'work' => array('constraint' => 1, 'type' => 'tinyint', 'null' => true), // 運動の有無 
             'work_memo' => array('type' => 'text', 'null' => true), // メモ(任意) 
-            'created_at' => array('type' => 'datetime', 'null' => false), // 作成日時 
-            'updated_at' => array('type' => 'datetime', 'null' => false), // 更新日時 
+            'created_at' => array('type' => 'int', 'constraint' => 11, 'null' => false),
+            'updated_at' => array('type' => 'int', 'constraint' => 11, 'null' => false),
         ), array('id'), true, 'InnoDB'); // 最後の文字コード指定を削除済み
 
         // 外部キー制約の追加 (この行はコメントアウトを維持してください)
