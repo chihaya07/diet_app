@@ -1,4 +1,27 @@
 <h1>ダッシュボード</h1>
+
+<form action="/dashboard" method="get">
+    <label for="start_date">開始日:</label>
+    <input type="date" id="start_date" name="start_date" value="<?php echo \Input::get('start_date'); ?>">
+    <label for="end_date">終了日:</label>
+    <input type="date" id="end_date" name="end_date" value="<?php echo \Input::get('end_date'); ?>">
+    <button type="submit">絞り込み</button>
+</form>
+<br>
+
+<div>
+    並び替え:
+    <a href="/dashboard?sort_by=record_date&sort_order=desc"><a href="/dashboard?sort_by=record_date&sort_order=asc">記録日 (新しい順)</a>
+    |
+    <a href="/dashboard?sort_by=record_date&sort_order=desc">記録日 (古い順)</a>
+    |
+    <a href="/dashboard?sort_by=weight&sort_order=desc">体重 (軽い順)</a>
+    |
+    <a href="/dashboard?sort_by=weight&sort_order=asc">体重 (重い順)</a>
+</div>
+<br>
+
+
 <?php if (\Session::get_flash('success')): ?>
     <div style="color: green;">
         <?php echo \Session::get_flash('success'); ?>
@@ -41,7 +64,7 @@
 <h2>メニュー</h2>
 <ul>
     <li><a href="/record">今日の記録</a></li>
-    <li><a href="/target">目標設定</a> (未作成)</li>
+    <li><a href="/target">目標設定</a></li>
     <li><a href="/weight/list">過去の記録一覧</a> (未作成)</li>
 </ul>
 

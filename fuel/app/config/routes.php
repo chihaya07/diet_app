@@ -11,4 +11,8 @@ return array(
 
     'record' => 'record/create',
     'weight/list' => 'weight/list',
+    'weight/edit/(:num)' => 'weight/edit/$1',   // ★ この行を追加：編集ページ
+    'weight/delete/(:num)' => 'weight/delete/$1', // ★ この行を追加：削除処理
+
+    'target' => 'targets/index', //目標設定ページ
 );

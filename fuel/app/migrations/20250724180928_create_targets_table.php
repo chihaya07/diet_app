@@ -11,9 +11,9 @@ class Create_targets_table // ここを Create_targets_table に修正 (Migratio
             'user_id' => array('constraint' => 11, 'type' => 'int', 'unsigned' => true), // ユーザーID、外部キー 
             'target_weight' => array('constraint' => '5,2', 'type' => 'decimal', 'null' => true), // 目標体重(例:99.99kgまで対応),小数点型 
             'target_work' => array('constraint' => 11, 'type' => 'int', 'null' => true), // 目標運動回数 
-            'monthly_at' => array('type' => 'date', 'null' => true), // 目標設定(月) 
-            'created_at' => array('type' => 'int', 'constraint' => 11, 'null' => false), // ★INT型に変更
-            'updated_at' => array('type' => 'int', 'constraint' => 11, 'null' => false, 'default' => 0), // ★INT型に変更
+            'monthly_at' => array('constraint' => 7, 'type' => 'varchar', 'null' => true), // ★ VARCHAR(7)に変更
+            'created_at' => array('constraint' => 11, 'type' => 'int', 'null' => false), // ★ INTに変更
+            'updated_at' => array('constraint' => 11, 'type' => 'int', 'null' => false), // ★ INTに変更
         ), array('id'), true, 'InnoDB'); // 最後の文字コード指定を削除済み
 
         // 外部キー制約の追加 (この行はコメントアウトを維持してください)
