@@ -54,4 +54,9 @@ class Controller_Welcome extends Controller
 	{
 		return Response::forge(Presenter::forge('welcome/404'), 404);
 	}
+
+	public function action_react_page()
+    {
+        return \View::forge('react_page');
+    }
 }

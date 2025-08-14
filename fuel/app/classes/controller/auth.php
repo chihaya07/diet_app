@@ -6,7 +6,7 @@ class Controller_Auth extends Controller
         $data = array(); // ビューに渡すデータを初期化
 
         // POSTリクエストの場合（フォームが送信された場合）
-        if (\Input::method() == 'POST')
+        if (\Input::method() === 'POST')
         {
             // バリデーションオブジェクトを作成
             $val = \Validation::forge();
@@ -94,7 +94,7 @@ class Controller_Auth extends Controller
         $data = array(); // ビューに渡すデータを初期化
 
         // POSTリクエストの場合（ログインフォームが送信された場合）
-        if (\Input::method() == 'POST')
+        if (\Input::method() === 'POST')
         {
             $email = \Input::post('email');
             $password = \Input::post('password');

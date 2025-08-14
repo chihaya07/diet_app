@@ -16,7 +16,7 @@ class Controller_Record extends Controller
         $data = array();
 
         // POSTリクエストの場合（フォームが送信された場合）
-        if (\Input::method() == 'POST')
+        if (\Input::method() === 'POST')
         {
             // バリデーションオブジェクトを作成
             $val = \Validation::forge();

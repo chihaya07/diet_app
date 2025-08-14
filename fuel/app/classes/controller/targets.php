@@ -13,14 +13,13 @@ class Controller_Targets extends Controller
     public function action_index()
     {
         $data = array();
+        $user_id = \Auth::get('id');
 
         // POSTリクエストの場合（フォームが送信された場合）
         if (\Input::method() == 'POST')
         {
             // バリデーションオブジェクトを作成
             $val = \Validation::forge();
-
-            // ルールを追加
             $val->add('target_weight', '目標体重')
                 ->add_rule('required')
                 ->add_rule('numeric_min', 1)
@@ -28,35 +27,39 @@ class Controller_Targets extends Controller
                 ->add_rule('match_pattern', '/^\d+(\.\d{1,2})?$/');
 
             $val->add('monthly_at', '目標月')
-                ->add_rule('required');
+                ->add_rule('required')
+                ->add_rule('match_pattern', '/^\d{4}-\d{2}$/'); // YYYY-MM 形式をチェック
 
             $val->add('target_work', '目標運動回数')
                 ->add_rule('required')
                 ->add_rule('numeric_min', 0)
-                ->add_rule('numeric_max', 31);
+                ->add_rule('numeric_max', 31)
+                ->add_rule('valid_string', array('numeric')); // 数値であることをチェック
 
-            // バリデーションを実行
             if ($val->run())
             {
                 try
                 {
-                    $user_id = \Auth::get('id');
+                    $monthly_at = $val->validated('monthly_at');
+                    $target_weight = $val->validated('target_weight');
+                    $target_work = $val->validated('target_work');
 
-                    // 既に目標が設定されているか確認
+                    // データベースに挿入または更新するデータ
+                    $target_data = array(
+                        'user_id' => $user_id,
+                        'target_weight' => $target_weight,
+                        'target_work' => $target_work,
+                        'monthly_at' => $monthly_at,
+                        'updated_at' => \Date::forge()->get_timestamp(),
+                    );
+
+                    // 同じ月にすでに目標が設定されているか確認
                     $target_exists = \DB::select()
                                         ->from('targets')
                                         ->where('user_id', $user_id)
-                                        ->where('monthly_at', $val->validated('monthly_at'))
+                                        ->where('monthly_at', $monthly_at)
                                         ->execute()
                                         ->count();
-
-                    $target_data = array(
-                        'user_id' => $user_id,
-                        'target_weight' => $val->validated('target_weight'),
-                        'target_work' => $val->validated('target_work'),
-                        'monthly_at' => $val->validated('monthly_at'),
-                        'updated_at' => \Date::forge()->get_timestamp(),
-                    );
 
                     if ($target_exists > 0)
                     {
@@ -64,7 +67,7 @@ class Controller_Targets extends Controller
                         \DB::update('targets')
                             ->set($target_data)
                             ->where('user_id', $user_id)
-                            ->where('monthly_at', $val->validated('monthly_at'))
+                            ->where('monthly_at', $monthly_at)
                             ->execute();
                         \Session::set_flash('success', '目標を更新しました！');
                     }
@@ -93,6 +96,17 @@ class Controller_Targets extends Controller
         }
 
         // GETリクエストまたはPOSTでエラーがあった場合
-        return \View::forge('targets/index');
+        // 既存の目標データを取得してフォームに表示
+        $current_target = \DB::select()
+                            ->from('targets')
+                            ->where('user_id', $user_id)
+                            ->order_by('monthly_at', 'desc')
+                            ->limit(1)
+                            ->execute()
+                            ->as_array();
+
+        $data['target'] = isset($current_target[0]) ? $current_target[0] : null;
+
+        return \View::forge('targets/index', $data);
     }
 }

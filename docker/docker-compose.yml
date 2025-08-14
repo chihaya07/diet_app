@@ -25,6 +25,15 @@ services:
     networks:
       - fuelphp-network
 
+  node:
+    image: node:18-alpine # ★ ここを 18 に変更
+    volumes:
+      - ../:/var/www/html/my_fuel_project
+    working_dir: /var/www/html/my_fuel_project
+    tty: true
+    networks:
+      - fuelphp-network
+
 networks:
   fuelphp-network:
     driver: bridge

@@ -10,9 +10,10 @@ return array(
     'logout' => 'auth/logout',
 
     'record' => 'record/create',
-    'weight/list' => 'weight/list',
-    'weight/edit/(:num)' => 'weight/edit/$1',   // ★ この行を追加：編集ページ
-    'weight/delete/(:num)' => 'weight/delete/$1', // ★ この行を追加：削除処理
-
+    'weight/edit/(:num)' => 'weight/edit/$1',   // 編集ページ
+    'weight/delete/(:num)' => 'weight/delete/$1', // 削除処理
     'target' => 'targets/index', //目標設定ページ
+
+    'react' => 'welcome/react_page',
+    'api/recodes' => 'api/recodes', // 記録のデータを取得するAPIエンドポイント
 );

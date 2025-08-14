@@ -18,34 +18,76 @@ class Controller_Weight extends Controller
         // POSTリクエストの場合（フォームが送信された場合）
         if (\Input::method() == 'POST')
         {
-            // ここにバリデーションとデータベース保存のロジックを記述します
-            // 現時点では、データをただ表示するだけにします
-            $weight = \Input::post('weight');
-            $record_date = \Input::post('record_date');
+            // バリデーションオブジェクトを作成
+            $val = \Validation::forge();
 
-            $data = array(
-                'weight' => $weight,
-                'record_date' => $record_date,
-                'message' => 'フォームが送信されました。ここから処理を開始します。'
-            );
+            // ルールを追加
+            $val->add('record_date', '記録日')
+                ->add_rule('required');
 
-            // デバッグ用にデータをビューに渡す
-            return \View::forge('weight/create', $data);
+            $val->add('weight', '体重')
+                ->add_rule('required')
+                ->add_rule('numeric_min', 1)
+                ->add_rule('numeric_max', 300)
+                ->add_rule('match_pattern', '/^\d+(\.\d{1,2})?$/');
+
+            $val->add('meal_memo', '食事メモ');
+            $val->add('work', '運動の有無');
+            $val->add('work_memo', '運動メモ');
+
+
+            // バリデーションを実行
+            if ($val->run())
+            {
+                // バリデーション成功
+                try
+                {
+                    // ログインユーザーのIDを取得
+                    $user_id = \Auth::get('id');
+
+                    // データベースに挿入するデータ
+                    $record_data = array(
+                        'user_id' => $user_id,
+                        'record_date' => $val->validated('record_date'),
+                        'weight' => $val->validated('weight'),
+                        'meal_memo' => $val->validated('meal_memo'),
+                        'work' => (\Input::post('work') === '1') ? 1 : 0, // チェックボックスの値
+                        'work_memo' => $val->validated('work_memo'),
+                        'created_at' => \Date::forge()->get_timestamp(),
+                        'updated_at' => \Date::forge()->get_timestamp(),
+                    );
+
+                    // Modelを使ってDBに挿入
+                    if (Model_Recode::create_recode($record_data))
+                    {
+                        \Session::set_flash('success', '記録を保存しました！');
+                        \Response::redirect('dashboard'); // 記録後はダッシュボードへ
+                    }
+                    else
+                    {
+                        \Session::set_flash('error', '記録の保存に失敗しました。');
+                    }
+                }
+                catch (\Exception $e)
+                {
+                    \Session::set_flash('error', '記録の保存に失敗しました：' . $e->getMessage());
+                }
+            }
+            else
+            {
+                // バリデーション失敗
+                \Session::set_flash('error', $val->show_errors());
+            }
         }
 
-        // GETリクエストの場合（初めてフォームページにアクセスした場合）
-        return \View::forge('weight/create');
+        // GETリクエストまたはPOSTでエラーがあった場合
+        return \View::forge('record/create');
     }
 
     public function action_edit($id = null)
     {
-        // レコードが存在するか確認
-        $recode_query = \DB::select()
-                            ->from('recodes')
-                            ->where('id', $id)
-                            ->where('user_id', \Auth::get('id'))
-                            ->execute()
-                            ->as_array();
+        $user_id = \Auth::get('id');
+        $recode_query = Model_Recode::get_by_id_and_user_id($id, $user_id);
 
         if (empty($recode_query))
         {
@@ -53,16 +95,13 @@ class Controller_Weight extends Controller
             \Response::redirect('dashboard');
         }
 
-        $recode = $recode_query[0]; // 元のレコードデータを取得
+        $recode = $recode_query[0];
 
-        // POSTリクエストの場合（フォームが送信された場合）
         if (\Input::method() == 'POST')
         {
-            // ここにバリデーションとデータベース更新のロジックを記述します
             $record_date = \Input::post('record_date');
             $weight = \Input::post('weight');
 
-            // バリデーションオブジェクトを作成
             $val = \Validation::forge();
             $val->add('record_date', '記録日')->add_rule('required');
             $val->add('weight', '体重')
@@ -73,65 +112,54 @@ class Controller_Weight extends Controller
 
             if ($val->run())
             {
-                // バリデーション成功
                 $record_data = array(
                     'record_date' => $val->validated('record_date'),
                     'weight' => $val->validated('weight'),
                     'updated_at' => \Date::forge()->get_timestamp(),
                 );
 
-                // データベースを更新
-                \DB::update('recodes')
-                    ->set($record_data)
-                    ->where('id', $id)
-                    ->where('user_id', \Auth::get('id'))
-                    ->execute();
-
-                \Session::set_flash('success', '記録を更新しました！');
-                \Response::redirect('dashboard');
+                if (Model_Recode::update_recode($id, $user_id, $record_data))
+                {
+                    \Session::set_flash('success', '記録を更新しました！');
+                    \Response::redirect('dashboard');
+                }
+                else
+                {
+                    \Session::set_flash('error', '記録の更新に失敗しました。');
+                }
             }
             else
             {
-                // バリデーション失敗
                 \Session::set_flash('error', $val->show_errors());
 
-                // バリデーション失敗時もビューにデータを渡す
                 $recode['record_date'] = \Input::post('record_date');
                 $recode['weight'] = \Input::post('weight');
             }
         }
-
-        // GETリクエストまたはPOSTリクエストでエラーがあった場合、フォームを再表示
         $data = array('recode' => $recode);
         return \View::forge('weight/edit', $data);
     }
 
     public function action_delete($id = null)
     {
-        // レコードが存在するか確認
-        $recode = \DB::select()
-                    ->from('recodes')
-                    ->where('id', $id)
-                    ->where('user_id', \Auth::get('id'))
-                    ->execute()
-                    ->count();
+        $user_id = \Auth::get('id');
+        $recode_exists = Model_Recode::get_by_id_and_user_id($id, $user_id);
 
-        if ($recode > 0)
+        if (!empty($recode_exists))
         {
-            // レコードを削除
-            \DB::delete('recodes')
-                ->where('id', $id)
-                ->where('user_id', \Auth::get('id'))
-                ->execute();
-
-            \Session::set_flash('success', '記録を削除しました。');
+            if (Model_Recode::delete_recode($id, $user_id))
+            {
+                \Session::set_flash('success', '記録を削除しました。');
+            }
+            else
+            {
+                \Session::set_flash('error', '記録の削除に失敗しました。');
+            }
         }
         else
         {
             \Session::set_flash('error', '記録が見つかりません。');
         }
-
-        // 削除後はダッシュボードへリダイレクト
         \Response::redirect('dashboard');
     }
 

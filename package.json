@@ -1,0 +1,35 @@
+{
+  "name": "my_fuel_project",
+  "version": "1.0.0",
+  "description": "## Dockerの基本知識 Dockerの基本的な概念については、以下のリンクを参考にしてください： - [Docker入門（1）](https://qiita.com/Sicut_study/items/4f301d000ecee98e78c9) - [Docker入門（2）](https://qiita.com/takusan64/items/4d622ce1858c426719c7)",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chihaya07/diet_app.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chihaya07/diet_app/issues"
+  },
+  "homepage": "https://github.com/chihaya07/diet_app#readme",
+  "dependencies": {
+    "@babel/core": "^7.28.0",
+    "@babel/preset-react": "^7.27.1",
+    "axios": "^1.11.0",
+    "babel-loader": "^10.0.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^6.30.1",
+    "webpack": "^5.101.1",
+    "webpack-cli": "^6.0.1"
+  }
+}
